@@ -26,6 +26,32 @@
             justify-content: center;
             min-height: 100vh;
             background: #e3f2fd;
+            background-image: linear-gradient(95deg, #fdbaff 0%, #00d6ba 100%);
+        }
+
+
+        .start {
+            transition: 2s;
+        }
+
+        .start button {
+            background-color: #50ebff;
+            padding: 15px;
+            border-radius: 21px;
+            font-size: 30px;
+            transition: 3s;
+        }
+
+        .start button:hover {
+            background-color: #1bfc9e;
+            padding: 15px;
+            border-radius: 32px;
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .show {
+            display: none;
         }
 
         .wrapper {
@@ -35,9 +61,9 @@
             overflow: hidden;
             flex-direction: column;
             justify-content: center;
-            background: #293447;
+            background: #53575a;
             border-radius: 5px;
-            box-shadow: 0 20px 40px rgba(52, 87, 220, 0.2);
+            box-shadow: 0 20px 40px rgba(83, 84, 90, 0.2);
         }
 
         .game-details {
@@ -47,13 +73,14 @@
             padding: 20px 27px;
             display: flex;
             justify-content: space-between;
+            border: 2px solid #302f2f;
         }
 
         .play-board {
             height: 100%;
             width: 100%;
             display: grid;
-            background: #212837;
+            background: #353638;
             grid-template: repeat(30, 1fr) / repeat(30, 1fr);
         }
 
@@ -101,38 +128,54 @@
             }
         }
     </style>
+    <div class="start" onclick="myFunction(this)">
+        <button>start a game</button>
+    </div>
+    <div class="show" id="panel">
+        <div class="wrapper">
+            <div class="game-details">
+                <span class="score">Score: 0</span>
+                <span class="high-score">High Score: 0</span>
+            </div>
 
-    <div class="wrapper">
-        <div class="game-details">
-            <span class="score">Score: 0</span>
-            <span class="high-score">High Score: 0</span>
+            <div class="play-board" id="panel"></div>
+
+
+            <div class="controls">
+                <i data-key="ArrowLeft" class="fa-solid fa-arrow-left-long"></i>
+                <i data-key="ArrowUp" class="fa-solid fa-arrow-up-long"></i>
+                <i data-key="ArrowRight" class="fa-solid fa-arrow-right-long"></i>
+                <i data-key="ArrowDown" class="fa-solid fa-arrow-down-long"></i>
+            </div>
+            <audio id="myAudio">
+                <source src="https://audio.jukehost.co.uk/nfiQQkFrOXKG5UyvXz6lbxCsIedE9fTu" type="audio/ogg">
+                <source src="/img/food.mp3">
+            </audio>
+            <audio id="myAudio1">
+                <source src="https://audio.jukehost.co.uk/vmhdA4CGiwRowZzbgUYxZgN3H16rq0s2" type="audio/ogg">
+                <source src="/img/gameover.mp3">
+            </audio>
+            <audio id="myAudio2">
+                <source src="https://audio.jukehost.co.uk/1eRSFKHTwo8oRJGWcweyfkzouuaGsoEg" type="audio/ogg">
+                <source src="/img/move.mp3">
+            </audio>
+            <audio id="myAudio3">
+                <source src="https://audio.jukehost.co.uk/KvFfUPL52AblOD5g1Wxw4kvSs0WEuAnZ" type="audio/ogg">
+                <source src="/img/music.mp3">
+            </audio>
         </div>
-
-        <div class="play-board" id="panel"></div>
-
-
-        <div class="controls">
-            <i data-key="ArrowLeft" class="fa-solid fa-arrow-left-long"></i>
-            <i data-key="ArrowUp" class="fa-solid fa-arrow-up-long"></i>
-            <i data-key="ArrowRight" class="fa-solid fa-arrow-right-long"></i>
-            <i data-key="ArrowDown" class="fa-solid fa-arrow-down-long"></i>
-        </div>
-        <audio id="myAudio">
-            <source src="https://audio.jukehost.co.uk/nfiQQkFrOXKG5UyvXz6lbxCsIedE9fTu" type="audio/ogg">
-        </audio>
-        <audio id="myAudio1">
-            <source src="https://audio.jukehost.co.uk/vmhdA4CGiwRowZzbgUYxZgN3H16rq0s2" type="audio/ogg">
-        </audio>
-        <audio id="myAudio2">
-            <source src="https://audio.jukehost.co.uk/1eRSFKHTwo8oRJGWcweyfkzouuaGsoEg" type="audio/ogg">
-        </audio>
-        <audio id="myAudio3">
-            <source src="https://audio.jukehost.co.uk/KvFfUPL52AblOD5g1Wxw4kvSs0WEuAnZ" type="audio/ogg">
-        </audio>
     </div>
 
 
     <script>
+        let show = document.getElementsByClassName("show")
+        function myFunction(x) {
+            x.style.display = "none";
+            document.getElementById("panel").style.display = "flex";
+            musicsound.play();
+            musicsound.loop = true;
+        }
+
         const playBoard = document.querySelector(".play-board");
         const scoreElement = document.querySelector(".score");
         const highScoreElement = document.querySelector(".high-score");
@@ -151,16 +194,12 @@
 
         // Get high score from local storage
 
-        function myFunction(x) {
-            x.style.display = "none";
-            document.getElementById("panel").style.display = "grid";
-        }
+
         let highScore = localStorage.getItem("high-score") || 0;
         highScoreElement.innerText = `High Score: ${highScore}`;
 
         // Pass a random between 1 and 30 as food position
-        musicsound.play();
-        musicsound.loop = true;
+
         const updateFoodPosition = () => {
             foodX = Math.floor(Math.random() * 30) + 1;
             foodY = Math.floor(Math.random() * 30) + 1;
@@ -171,7 +210,10 @@
             musicsound.pause();
             gameoversound.play();
             alert("Game Over! Press OK to replay...");
+            snakeX = 5, snakeY = 5;
+            score = 0;
             location.reload();
+            musicsound.pause();
         }
 
         // Change velocity value based on key press
@@ -220,7 +262,6 @@
             for (let i = snakeBody.length - 1; i > 0; i--) {
                 snakeBody[i] = snakeBody[i - 1];
             }
-            movesound.play();
 
             snakeBody[0] = [snakeX, snakeY];
 
@@ -237,6 +278,7 @@
                 // Check snake head hit body or no
                 if (i !== 0 && snakeBody[0][1] === snakeBody[i][1] && snakeBody[0][0] === snakeBody[i][0]) {
                     gameOver = true;
+                    movesound.play();
                 }
             }
             playBoard.innerHTML = html;
